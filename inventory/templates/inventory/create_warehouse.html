@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%; border-radius: 10px;">
+        <h2 class="text-center mb-4 text-primary">Create Warehouse</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="warehouse_location" class="form-label fw-bold">Enter Location</label>
+                <input type="text" class="form-control" id="warehouse_location" name="warehouse_location" required>
+            </div>
+            <div class="mb-3">
+                <label for="manager" class="form-label fw-bold">Manager</label>
+                <select class="form-control" id="manager" name="manager">
+                    {% for manager in managers %}
+                    <option value="{{ manager.id }}">{{ manager.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary px-4">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

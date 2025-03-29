@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Warehouses</h1>
+<a href = "{% url 'create_warehouse' %}" class="btn btn-primary mb-2">Add new</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Location</th>
+            <th>Manager</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for warehouse in warehouses %}
+        <tr>
+            <td>{{ warehouse.id }}</td>
+            <td>{{ warehouse.warehouse_location }}</td>
+            <td>{{ warehouse.manager }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{%for msg in messages %}
+    <p>{{msg}}</p>
+{% endfor %}
+{% endblock %}

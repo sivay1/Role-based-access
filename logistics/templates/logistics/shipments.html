@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Shipments</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Order</th>
+            <th>Warehouse</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for shipment in shipments %}
+        <tr>
+            <td>{{ shipment.id }}</td>
+            <td>{{ shipment.order }}</td>
+            <td>{{ shipment.warehouse }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

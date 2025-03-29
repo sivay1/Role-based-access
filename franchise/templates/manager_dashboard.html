@@ -1,0 +1,68 @@
+
+{% extends "base.html" %}
+{% comment %} {% block title %}Manager Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h2>Manager Dashboard</h2>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow">
+                <h5>Inventory</h5>
+                <a href="{% url 'inventory' %}" class="btn btn-primary">Manage Inventory</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow">
+                <h5>Warehouses</h5>
+                <a href="{% url 'warehouses' %}" class="btn btn-primary">View Warehouses</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow">
+                <h5>Suppliers</h5>
+                <a href="{% url 'suppliers' %}" class="btn btn-primary">View Suppliers</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow">
+                <h5>Suppliers</h5>
+                <a href="{% url 'shipments' %}" class="btn btn-primary">View Shipments</a>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+{% endblock %} {% endcomment %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h2 class="fw-bold">Welcome, {{ request.user.username }}!👋</h2>
+            <p class="text-muted">You are logged in as <strong>{{ request.session.user_role }}</strong></p>
+            <p class="lead">Navigate to your dashboard to manage your tasks efficiently.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body text-center p-4">
+                    <h4 class="card-title">Go to Your Dashboard</h4>
+                    
+                    <a href="{{ dashboard_url }}" class="btn btn-primary btn-lg rounded-pill px-4">
+                        Open Dashboard <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

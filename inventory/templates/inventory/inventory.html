@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.download-btn{
+    float:right;
+    margin-bottom:10px;
+}
+</style>
+<h1>Inventory List</h1>
+<a href="{% url 'create_inventory' %}" class="btn btn-primary mb-2">Add items</a>
+<a href="{% url 'billing' %}" class="btn btn-primary mb-2">Bills</a>
+<a href="{% url 'sales' %}" class="btn btn-primary mb-2">Sales</a> 
+
+<!-- Upload CSV Form -->
+<form method="POST" enctype="multipart/form-data" action="{% url 'uploadinventory' %}" class="upload-form">
+    {% csrf_token %}
+    <input type="file" name="csv_file" required class="form-control d-inline-block w-auto">
+    <button type="submit" class="btn btn-success btn-sm">
+        <i class="bi bi-upload"></i> Upload CSV
+    </button>
+</form>
+
+<!-- Download data -->
+<a href="{% url 'export_reports' 'csv' %}" class="btn btn-default btn-sm download-btn">
+    <i class="bi bi-download"></i> Download inventory data
+</a>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Supplier</th>
+            <th>Warehouse</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in inventory %}
+        <tr>
+            {% comment %} <td>{{ item.id }}</td> {% endcomment %}
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.product_name }}</td>
+            <td>
+                {% if item.quantity == 0 %}
+                    Out of stock
+                {% else %}
+                    {{ item.quantity}}
+                {% endif %}
+            </td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.supplier.supplier_name }}</td>
+            <td>{{ item.warehouse.warehouse_location }}</td>
+            <td>
+                <a href="{% url 'update_inventory' item.id %}" class="btn btn-sm btn-warning">Edit</a>
+                <form action="{% url 'delete_inventory' item.id %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        
+        {% endfor %}
+        {% if messages %}
+            {%for msg in messages %}
+                {{msg}}
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>
+
+{% endblock %}

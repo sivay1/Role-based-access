@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Suppliers</h1>
+<div>
+    {% if messages %}
+        {%for ms in messages %}
+            {{ms}}
+        {% endfor %}
+    {% endif %}
+</div>
+<a href="{% url 'create_suppliers' %}" class="btn btn-primary mb-2">Add</a> 
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Supplier Name</th>
+            <th>Contact Info</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Country</th>
+            <th>Pincode</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for supplier in suppliers %}
+        <tr>
+            <td>{{ supplier.id }}</td>
+            <td>{{ supplier.supplier_name }}</td>
+            <td>{{ supplier.contact_info }}</td>
+            <td>{{ supplier.address }}</td>
+            <td>{{ supplier.city }}</td>
+            <td>{{ supplier.state }}</td>
+            <td>{{ supplier.country }}</td>
+            <td>{{ supplier.pincode }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

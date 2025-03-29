@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg p-4" style="max-width: 600px; width: 100%; border-radius: 10px;">
+        <h2 class="text-center mb-4 text-primary">Create Order</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="customer" class="form-label fw-bold">Customer</label>
+                <select class="form-control" id="customer" name="customer">
+                    {% for owner in owners %}
+                    <option value="{{ owner.id }}">{{ owner.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="inventory" class="form-label fw-bold">Inventory</label>
+                <input type="text" class="form-control" id="inventory" name="inventory" required>
+            </div>
+            <div class="mb-3">
+                <label for="order_date" class="form-label fw-bold">Order Date</label>
+                <input type="date" class="form-control" id="order_date" name="order_date" required>
+            </div>
+            <div class="mb-3">
+                <label for="order_status" class="form-label fw-bold">Order Status</label>
+                <select class="form-control" id="order_status" name="order_status" required>
+                    <option value="Pending">Pending</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary px-4">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

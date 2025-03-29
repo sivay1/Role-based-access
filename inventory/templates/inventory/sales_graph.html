@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            width: 90%; /* Adjust based on screen size */
+            max-width: 800px; /* Maximum width */
+            height: auto; /* Allows height to be responsive */
+            margin: 0 auto; /* Centers the chart */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Sales Over Time</h1>
+    <div class="chart-container">
+        <canvas id="salesChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'line', // Line chart for sales over time
+            data: {
+                labels: {{ labels|safe }}, // Dates from the view
+                datasets: [{
+                    label: 'Total Sales',
+                    data: {{ sales_amounts|safe }}, // Sales amounts from the view
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true, 
+                maintainAspectRatio: false, 
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

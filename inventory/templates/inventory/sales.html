@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+<!-- Dashboard Container -->
+<div class="dashboard-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1>Sales Dashboard</h1>
+    </div>
+    
+    <!-- Content Card -->
+    <div class="content-card">
+        <!-- Navigation Links -->
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav {% if tab == 'sales' %}active{% endif %}" href="?tab=sales">Sales Data</a>
+            </li>
+            {% comment %} <li class="nav-item">
+                <a class="nav {% if tab == 'add' %}active{% endif %}" href="?tab=add">Add Sales</a>
+            </li> {% endcomment %}
+            <li class="nav-item">
+                <a class="nav {% if tab == 'graph' %}active{% endif %}" href="?tab=graph">View Graph</a>
+            </li>
+        </ul>
+
+        <!-- Inner Box (Content Area) -->
+        <div class="inner-box">
+            
+            {% if tab == 'sales' %}
+                <!-- Sales Table -->
+                <h2>Sales Data</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product</th>
+                            <th>Quantity Sold</th>
+                            <th>Sale Date</th>
+                            <th>Total Amount</th>
+                            <th>Customer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sale in sales %}
+                        <tr>
+                            <td>{{ sale.id }}</td>
+                            <td>{{ sale.product }}</td>
+                            <td>{{ sale.quantity_sold }}</td>
+                            <td>{{ sale.sale_date }}</td>
+                            <td>{{ sale.total_amount }}</td>
+                            <td>{{ sale.customer }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls -->
+                <div class="pagination-controls">
+                    {% if sales.has_previous %}
+                        <a href="?tab=sales&page=1">First</a>
+                        <a href="?tab=sales&page={{ sales.previous_page_number }}">Previous</a>
+                    {% endif %}
+
+                    <span class="pagination-info">Page {{ sales.number }} of {{ sales.paginator.num_pages }}</span>
+
+                    {% if sales.has_next %}
+                        <a href="?tab=sales&page={{ sales.next_page_number }}">Next</a>
+                        <a href="?tab=sales&page={{ sales.paginator.num_pages }}">Last</a>
+                    {% endif %}
+                </div>
+
+                <!-- Messages -->
+                {% for msg in messages %}
+                    <p class="message">{{ msg }}</p>
+                {% endfor %}
+
+                <!-- Add Sales Button -->
+                <div style="margin-top: 1.5rem; text-align: center;">
+                    <a href="?tab=sales&add_form=1" class="btn btn-success">Add Sales</a>
+                </div>
+
+                <!-- Show Sales Form (Only shows if 'add_form=1' is in the URL) -->
+                {% if request.GET.add_form == '1' %}
+                <!-- Add Sales Form -->
+                <div class="form-container">
+                    <h1>Add Sales</h1>
+                    <form method="post">
+                        {% csrf_token %}
+                        <!-- Form Fields -->
+                        <div class="mb-3">
+                            <label for="id_product" class="form-label">Product</label>
+                            {{ form.product }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_quantity_sold" class="form-label">Quantity Sold</label>
+                            {{ form.quantity_sold }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_sale_date" class="form-label">Sale Date</label>
+                            {{ form.sale_date }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_customer" class="form-label">Customer</label>
+                            {{ form.customer }}
+                        </div>
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <a href="{% url 'sales' %}" class="btn btn-secondary btn-cancel">Cancel</a>
+                        </div>
+                        
+                        <!-- Form Errors -->
+                        {% for field in form %}
+                        <div>
+                            {% if field.errors %}
+                                <ul class="errorlist">
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </form>
+                </div>
+                {% endif %}
+            
+            {% elif tab == 'graph' %}
+                <!-- Sales Graph -->
+                <h2>Sales Over Time</h2>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+
+                <!-- Chart.js Script -->
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script>
+                    var ctx = document.getElementById('salesChart').getContext('2d');
+                    var salesChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: {{ labels|safe }},
+                            datasets: [{
+                                label: 'Total Sales',
+                                data: {{ sales_amounts|safe }},
+                                backgroundColor: 'rgba(13, 110, 253, 0.2)',
+                                borderColor: 'rgba(13, 110, 253, 1)',
+                                borderWidth: 2,
+                                tension: 0.3,
+                                pointBackgroundColor: 'rgba(13, 110, 253, 1)',
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '$' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return '$' + context.parsed.y.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                </script>
+            {% endif %}
+        </div> <!-- End Inner Box -->
+    </div> <!-- End Content Card -->
+</div> <!-- End Dashboard Container -->
+
+{% endblock %}

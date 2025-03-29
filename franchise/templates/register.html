@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register & Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        #box {
+            width: 400px;
+            background: white;
+            padding: 20px;
+            margin: 50px auto;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h2 {
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            text-align: left;
+            margin-top: 10px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #butt {
+            background: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        #butt:hover {
+            background: #218838;
+        }
+        .error {
+            color: red;
+            text-align: left;
+            font-size: 14px;
+        }
+        .mt {
+            margin-top: 15px;
+        }
+        .mt2 {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .mt2:hover {
+            text-decoration: underline;
+        }
+        .welcome-text {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-text">Welcome! Create your account to get started.</div>
+    <h2>Register</h2>
+    <div id="box">
+        {% comment %} {% if error %}
+            <div class="error">
+                {% for field, messages in error.items %}
+                    <strong>{{ field }}:</strong>
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </div>
+        {% endif %} {% endcomment %}
+        <form method="POST" action="" id="mainform">
+            {% csrf_token %}
+            <label>{{ form.username.label }}</label>
+            {{ form.username }}
+            
+            <label>{{ form.email.label }}</label>
+            {{ form.email }}
+            
+            <label>{{ form.password1.label }}</label>
+            {{ form.password1 }}
+            
+            <label>{{ form.password2.label }}</label>
+            {{ form.password2 }}
+            
+            {% comment %} <label>Role</label>
+            {{ form.role }}
+            {% if form.role.errors %}
+                <div class="error">{{ form.role.errors }}</div>
+            {% endif %} {% endcomment %}
+            
+            <input type="submit" value="Register Now" id="butt">
+             
+			 {% if form.errors %}
+                <div class="error">
+                    {% for error in form.errors.values %}
+                        {{ error }}<br>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+			{% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+            <div class="mt">
+                <h5>Already have an account?</h5> <a href="{% url 'login_user' %}" class="mt2">Login</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

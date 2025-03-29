@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Update Order</h1>
+ {% if error %}
+    <div style="color: red; font-weight: bold;">
+        <p>Error: {{ error }}</p>
+    </div>
+ {% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %}; font-weight: bold;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+<form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="customer" class="form-label">Customer</label>
+        <input type="text" class="form-control" id="customer" name="customer" value="{{ order.customer }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="inventory" class="form-label">Inventory</label>
+        <input type="text" class="form-control" id="inventory" name="inventory" value="{{ order.inventory }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="order_date" class="form-label">Order Date</label>
+        <input type="date" class="form-control" id="order_date" name="order_date" value="{{ order.order_date }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="order_status" class="form-label">Order Status</label>
+        <select class="form-control" id="order_status" name="order_status" required>
+            <option value="Pending" {% if order.order_status == "Pending" %}selected{% endif %}>Pending</option>
+            <option value="Shipped" {% if order.order_status == "Shipped" %}selected{% endif %}>Shipped</option>
+            <option value="Delivered" {% if order.order_status == "Delivered" %}selected{% endif %}>Delivered</option>
+            <option value="Cancelled" {% if order.order_status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+
+</form>
+{% endblock %}

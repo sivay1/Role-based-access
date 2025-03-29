@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Deliveries</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Order</th>
+            <th>Delivery Status</th>
+            <th>Delivery Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for delivery in deliveries %}
+        <tr>
+            <td>{{ delivery.id }}</td>
+            <td>{{ delivery.order }}</td>
+            <td>{{ delivery.delivery_status }}</td>
+            <td>{{ delivery.delivery_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

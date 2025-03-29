@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% comment %} {% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h2>Admin Dashboard</h2>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow">
+                <h5>Orders</h5>
+                <a href="{% url 'orders' %}" class="btn btn-primary">Manage Orders</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow">
+                <h5>Inventory</h5>
+                <a href="{% url 'inventory' %}" class="btn btn-primary">Manage Inventory</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow">
+                <h5>Warehouses</h5>
+                <a href="{% url 'warehouses' %}" class="btn btn-primary">View Warehouses</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3 text-center shadow">
+                <h5>Suppliers</h5>
+                <a href="{% url 'suppliers' %}" class="btn btn-primary">View Suppliers</a>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h2 class="fw-bold">Welcome, {{ request.user }}!👋</h2>
+            <p class="text-muted">You are logged in as <strong>{{ request.session.user_role }}</strong></p>
+            <p class="lead">Navigate to your dashboard to manage your tasks efficiently.</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body text-center p-4">
+                    <h4 class="card-title">Go to Your Dashboard</h4>
+                    
+                    <a href="{{ dashboard_url }}" class="btn btn-primary btn-lg rounded-pill px-4">
+                        Open Dashboard <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="fw-bold">Low Stock Alerts</h2>
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                {{ low_stock_count }} product(s) need reordering
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Products Below Stock Threshold</h6>
+                    <span class="badge bg-danger">Threshold: 10 units</span>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height:400px;">
+                        <canvas id="lowStockChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'inventory' %}" class="btn btn-primary btn-block mb-3">
+                        <i class="fas fa-boxes me-2"></i>Manage Inventory
+                    </a>
+                    <a href="{% url 'suppliers' %}" class="btn btn-success btn-block mb-3">
+                        <i class="fas fa-truck me-2"></i>Contact Suppliers
+                    </a>
+                    <button class="btn btn-warning btn-block" data-bs-toggle="modal" data-bs-target="#orderModal">
+                        <i class="fas fa-clipboard-list me-2"></i>Create Bulk Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js and Plugins -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.0.1"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chartData = JSON.parse('{{ chart_data|escapejs }}');
+    const ctx = document.getElementById('lowStockChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Current Stock',
+                data: chartData.quantities,
+                backgroundColor: chartData.colors,
+                borderColor: 'rgba(0, 0, 0, 0.1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Quantity in Stock'
+                    },
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Products'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let status = '';
+                            if (context.raw < 5) status = ' (CRITICAL)';
+                            else if (context.raw < 10) status = ' (LOW)';
+                            return `Stock: ${context.raw} units${status}`;
+                        }
+                    }
+                },
+                annotation: {
+                    annotations: {
+                        thresholdLine: {
+                            type: 'line',
+                            yMin: chartData.threshold,
+                            yMax: chartData.threshold,
+                            borderColor: 'red',
+                            borderWidth: 2,
+                            borderDash: [6, 6],
+                            label: {
+                                content: 'Reorder Threshold',
+                                enabled: true,
+                                position: 'right'
+                            }
+                        }
+                    }
+                }
+            },
+            onClick: function(evt, elements) {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const productName = chartData.labels[index];
+                    window.location.href = `/inventory/?search=${encodeURIComponent(productName)}`;
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

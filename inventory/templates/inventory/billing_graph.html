@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<style>
+    .chart-container {
+        width: 90%;
+        max-width: 600px;
+        height: 400px; /* Set a fixed height */
+        margin: 0 auto;
+    }
+</style>
+<body>
+    <h1>Revenue by Payment Method</h1>
+    <div class="chart-container">
+        <canvas id="billingChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('billingChart').getContext('2d');
+        const billingChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ payment_methods|safe }},
+                datasets: [{
+                    label: 'Total Revenue',
+                    data: {{ revenues|safe }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Allows chart resizing
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
